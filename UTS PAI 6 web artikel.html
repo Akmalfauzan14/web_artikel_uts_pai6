@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media Istiqomah</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f8f3ea; --gold: #c8973a; --gold-light: #e8c26e;
+      --dark: #1a1208; --brown: #4a2c0a; --green: #2d5016;
+      --green-light: #3d6b1e; --text: #2c1e0e; --muted: #7a6248;
+      --border: rgba(200,151,58,.22); --teal: #1a4a5a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Lora', Georgia, serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M36 4 L68 36 L36 68 L4 36 Z' fill='none' stroke='%23c8973a' stroke-width='0.35' opacity='0.13'/%3E%3Ccircle cx='36' cy='36' r='16' fill='none' stroke='%23c8973a' stroke-width='0.3' opacity='0.10'/%3E%3C/svg%3E");
+    }
+
+    /* ======== PROGRESS BAR ======== */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      z-index: 999; width: 0; transition: width .1s;
+    }
+
+    /* ======== NAV ======== */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(248,243,234,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 62px;
+    }
+    .logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; cursor: pointer; }
+    .logo-icon {
+      width: 34px; height: 34px; border: 1.5px solid var(--gold); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Amiri', serif; font-size: 1rem; color: var(--gold);
+    }
+    .logo span { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--brown); }
+
+    .nav-links { display: flex; align-items: center; gap: .2rem; }
+    .nav-links a {
+      font-family: 'Lora', serif; font-size: .82rem; color: var(--muted);
+      text-decoration: none; padding: .45rem .8rem; border-radius: 3px;
+      cursor: pointer; transition: color .2s, background .2s; white-space: nowrap;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--brown); background: rgba(200,151,58,.12); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: .4rem; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--brown); border-radius: 2px; transition: all .3s; }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none; position: absolute; top: 62px; left: 0; right: 0;
+      background: rgba(248,243,234,.98); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); flex-direction: column; padding: .5rem 0;
+      z-index: 49;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Lora', serif; font-size: .9rem; color: var(--muted);
+      text-decoration: none; padding: .7rem 2rem; cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .mobile-menu a:hover { background: rgba(200,151,58,.1); color: var(--brown); }
+
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* ======== PAGES ======== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ======== HOME PAGE ======== */
+    .home-hero {
+      position: relative; z-index: 1;
+      background: var(--green); padding: 5rem 2rem 4rem; text-align: center; overflow: hidden;
+    }
+    .home-hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 2 L58 30 L30 58 L2 30 Z' fill='none' stroke='%23fff' stroke-width='0.3' opacity='0.07'/%3E%3C/svg%3E");
+    }
+    .home-hero .bismillah { font-family: 'Amiri', serif; font-size: 2.2rem; color: var(--gold-light); margin-bottom: 1.2rem; }
+    .home-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,5vw,3.2rem); color: #fff; font-weight: 700; margin-bottom: .8rem; line-height: 1.25; }
+    .home-hero p { font-size: 1rem; color: rgba(255,255,255,.65); max-width: 520px; margin: 0 auto; line-height: 1.8; }
+
+    .articles-grid { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 3.5rem 2rem 5rem; }
+    .articles-grid h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark);
+      margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .articles-grid h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; }
+    .card {
+      background: white; border: 1px solid var(--border); border-radius: 6px;
+      overflow: hidden; cursor: pointer; transition: transform .25s, box-shadow .25s;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(26,18,8,.12); }
+    .card-badge {
+      padding: 1.4rem 1.4rem .8rem; display: flex; align-items: center; gap: .6rem;
+    }
+    .card-badge-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
+    .card-badge span { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .card-body { padding: 0 1.4rem 1.4rem; }
+    .card-body h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--dark); margin-bottom: .6rem; line-height: 1.4; }
+    .card-body p { font-size: .88rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding: .8rem 1.4rem; }
+    .card-footer span { font-size: .78rem; color: var(--muted); }
+    .card-read { font-size: .78rem; color: var(--gold); font-weight: 600; letter-spacing: .05em; }
+
+    .card-color-bar { height: 4px; }
+    .bar-green { background: linear-gradient(90deg, var(--green), var(--gold)); }
+    .bar-teal { background: linear-gradient(90deg, var(--teal), var(--gold)); }
+
+    /* ======== ARTICLE HEADER ======== */
+    .article-header {
+      position: relative; z-index: 1; padding: 5rem 2rem 4rem;
+      text-align: center; overflow: hidden;
+    }
+    .article-header.green-bg { background: var(--green); }
+    .article-header.teal-bg { background: var(--teal); }
+    .article-header::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 2 L58 30 L30 58 L2 30 Z' fill='none' stroke='%23fff' stroke-width='0.3' opacity='0.07'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .header-bismillah { font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-light); margin-bottom: 1.4rem; }
+    .header-cat {
+      display: inline-block; font-size: .72rem; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--gold-light);
+      border: 1px solid rgba(232,194,110,.4); padding: .25rem .8rem;
+      border-radius: 2px; margin-bottom: 1.2rem;
+    }
+    .article-header h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700; color: #fff; line-height: 1.2; max-width: 720px; margin: 0 auto 1.2rem;
+    }
+    .article-header h1 em { font-style: italic; color: var(--gold-light); }
+    .header-meta {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem; font-size: .82rem; color: rgba(255,255,255,.55); flex-wrap: wrap;
+    }
+    .header-author { display: flex; align-items: center; justify-content: center; gap: .7rem; margin-top: 1.6rem; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Amiri', serif; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .author-info { text-align: left; }
+    .author-info strong { display: block; font-size: .88rem; color: rgba(255,255,255,.9); font-family: 'Playfair Display', serif; }
+    .author-info span { font-size: .75rem; color: rgba(255,255,255,.45); }
+
+    /* ======== ARTICLE BODY ======== */
+    .article-wrapper { position: relative; z-index: 1; max-width: 740px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+    .pull-quote {
+      border-left: 3px solid var(--gold); padding: 1rem 1.5rem;
+      background: rgba(200,151,58,.07); border-radius: 0 4px 4px 0; margin-bottom: 2.5rem;
+    }
+    .pull-quote p { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--brown); line-height: 1.7; }
+    .pull-quote cite { display: block; margin-top: .5rem; font-size: .8rem; color: var(--muted); letter-spacing: .06em; }
+    .article-wrapper p { font-size: 1.05rem; line-height: 1.9; color: var(--text); margin-bottom: 1.5rem; }
+    .article-wrapper h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dark); margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+
+    .verse-block { background: var(--green); border-radius: 4px; padding: 2rem; text-align: center; margin: 2rem 0; }
+    .verse-block.teal { background: var(--teal); }
+    .verse-arabic { font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-light); line-height: 2; margin-bottom: .8rem; direction: rtl; }
+    .verse-latin { font-size: .9rem; font-style: italic; color: rgba(255,255,255,.6); margin-bottom: .4rem; }
+    .verse-meaning { font-size: .9rem; color: rgba(255,255,255,.85); font-weight: 600; }
+    .verse-ref {
+      display: inline-block; margin-top: .8rem; font-size: .75rem; letter-spacing: .1em;
+      color: var(--gold-light); border: 1px solid rgba(232,194,110,.3); padding: .2rem .6rem; border-radius: 2px;
+    }
+
+    .highlight-box { background: rgba(200,151,58,.1); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem 1.8rem; margin: 2rem 0; }
+    .highlight-box strong { display: block; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--brown); margin-bottom: .5rem; }
+    .highlight-box p { margin-bottom: 0; font-size: .95rem; color: var(--muted); }
+
+    .ornament-divider { display: flex; align-items: center; gap: .8rem; margin: 2.5rem 0; color: var(--gold); opacity: .5; }
+    .ornament-divider::before, .ornament-divider::after { content: ''; flex: 1; height: 1px; background: var(--gold); opacity: .4; }
+
+    .article-tags { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .tag {
+      font-size: .75rem; letter-spacing: .08em; color: var(--brown);
+      border: 1px solid var(--border); padding: .25rem .75rem; border-radius: 2px;
+      text-decoration: none; cursor: pointer; transition: background .2s, color .2s;
+    }
+    .tag:hover { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+
+    /* ======== SHARE SECTION ======== */
+    .share-section {
+      background: white; border: 1px solid var(--border); border-radius: 6px;
+      padding: 1.5rem 1.8rem; margin: 2rem 0; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .share-section p { font-size: .9rem; color: var(--muted); margin: 0; font-style: italic; }
+    .share-buttons { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .share-btn {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .78rem; font-family: 'Lora', serif; font-weight: 600;
+      padding: .45rem 1rem; border-radius: 3px; cursor: pointer;
+      border: none; transition: all .2s; letter-spacing: .04em;
+    }
+    .share-wa { background: #25d366; color: white; }
+    .share-wa:hover { background: #1fb85a; transform: translateY(-2px); }
+    .share-fb { background: #1877f2; color: white; }
+    .share-fb:hover { background: #1565d8; transform: translateY(-2px); }
+    .share-tw { background: #000; color: white; }
+    .share-tw:hover { background: #333; transform: translateY(-2px); }
+    .share-copy { background: rgba(200,151,58,.15); color: var(--brown); border: 1px solid var(--border); }
+    .share-copy:hover { background: var(--gold); color: var(--dark); transform: translateY(-2px); }
+
+    /* ======== COMMENT SECTION ======== */
+    .comment-section {
+      position: relative; z-index: 1; max-width: 740px; margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+    .comment-section h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--dark);
+      margin-bottom: 1.5rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .comment-count {
+      background: var(--gold); color: var(--dark); font-size: .72rem;
+      padding: .15rem .5rem; border-radius: 12px; font-family: 'Lora', serif; font-weight: 600;
+    }
+    .comment-form { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem; }
+    .comment-form h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--brown); margin-bottom: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label { font-size: .78rem; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+    .form-group input, .form-group textarea {
+      font-family: 'Lora', serif; font-size: .9rem; color: var(--text);
+      border: 1px solid var(--border); border-radius: 3px; padding: .6rem .9rem;
+      background: var(--cream); transition: border-color .2s, box-shadow .2s;
+      resize: none; outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,151,58,.12);
+    }
+    .form-group textarea { min-height: 100px; }
+    .btn-submit {
+      background: var(--green); color: white; border: none; border-radius: 3px;
+      font-family: 'Lora', serif; font-size: .88rem; font-weight: 600;
+      padding: .7rem 1.8rem; cursor: pointer; transition: all .2s;
+    }
+    .btn-submit:hover { background: var(--green-light); transform: translateY(-2px); }
+
+    .comments-list { display: flex; flex-direction: column; gap: 1.2rem; }
+    .comment-item {
+      background: white; border: 1px solid var(--border); border-radius: 6px;
+      padding: 1.2rem 1.4rem; animation: fadeIn .4s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .comment-header { display: flex; align-items: center; gap: .7rem; margin-bottom: .7rem; }
+    .comment-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Amiri', serif; font-size: 1rem; color: white;
+    }
+    .comment-meta strong { display: block; font-size: .88rem; font-family: 'Playfair Display', serif; color: var(--dark); }
+    .comment-meta span { font-size: .74rem; color: var(--muted); }
+    .comment-text { font-size: .9rem; line-height: 1.75; color: var(--text); }
+    .comment-like {
+      margin-top: .7rem; font-size: .78rem; color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; gap: .35rem;
+      border: none; background: none; transition: color .2s;
+    }
+    .comment-like:hover { color: var(--gold); }
+    .comment-like.liked { color: var(--gold); }
+    .no-comments { text-align: center; padding: 2.5rem; color: var(--muted); font-style: italic; font-size: .9rem; }
+
+    /* ======== CTA ======== */
+    .cta-section { position: relative; z-index: 1; background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3.5rem 2rem; text-align: center; }
+    .cta-section .arabic-small { font-family: 'Amiri', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: .6rem; }
+    .cta-section h3 { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--dark); margin-bottom: .8rem; }
+    .cta-section p { font-size: .95rem; color: var(--muted); max-width: 480px; margin: 0 auto 2rem; line-height: 1.75; }
+    .cta-buttons { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .btn-gold {
+      background: var(--gold); color: var(--dark); font-family: 'Lora', serif;
+      font-size: .92rem; font-weight: 600; padding: .8rem 1.8rem; border-radius: 2px;
+      border: none; cursor: pointer; transition: background .2s, transform .2s;
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-green-outline {
+      background: transparent; color: var(--green); font-family: 'Lora', serif;
+      font-size: .92rem; padding: .8rem 1.8rem; border-radius: 2px;
+      border: 1.5px solid var(--green); cursor: pointer; transition: all .2s;
+    }
+    .btn-green-outline:hover { background: var(--green); color: white; transform: translateY(-2px); }
+
+    /* ======== TOAST ======== */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--dark); color: white; padding: .7rem 1.5rem; border-radius: 4px;
+      font-size: .86rem; font-family: 'Lora', serif; z-index: 999;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1); pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ======== ABOUT & CONTACT PAGES ======== */
+    .static-page { position: relative; z-index: 1; max-width: 740px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+    .static-page h1 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dark); margin-bottom: .5rem; }
+    .static-page .sub { font-size: .9rem; color: var(--muted); margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .static-page h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--brown); margin: 2rem 0 .7rem; }
+    .static-page p { font-size: 1rem; line-height: 1.85; color: var(--text); margin-bottom: 1.2rem; }
+
+    .about-team { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.2rem; margin: 1.5rem 0; }
+    .team-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.4rem; text-align: center; }
+    .team-avatar {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto .8rem;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Amiri', serif; font-size: 1.4rem; color: white;
+    }
+    .team-card h4 { font-family: 'Playfair Display', serif; font-size: .95rem; color: var(--dark); margin-bottom: .2rem; }
+    .team-card p { font-size: .78rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    .contact-form { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 2rem; }
+    .contact-info { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .contact-info-item { background: rgba(200,151,58,.07); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; }
+    .contact-info-item span { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: .3rem; }
+    .contact-info-item p { font-size: .9rem; color: var(--brown); margin: 0; font-weight: 600; }
+
+    /* ======== FOOTER ======== */
+    footer { position: relative; z-index: 1; background: var(--dark); padding: 2.5rem 2rem; text-align: center; }
+    footer .logo { justify-content: center; margin-bottom: .8rem; }
+    footer .logo span { color: var(--gold-light); }
+    footer p { font-size: .82rem; color: rgba(255,255,255,.35); line-height: 1.7; }
+    footer .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin: 1rem 0; flex-wrap: wrap; }
+    footer .footer-links a { font-size: .82rem; color: rgba(255,255,255,.45); text-decoration: none; cursor: pointer; transition: color .2s; }
+    footer .footer-links a:hover { color: var(--gold-light); }
+
+    /* ======== RESPONSIVE ======== */
+    @media (max-width: 600px) {
+      .article-header h1 { font-size: 1.9rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .share-section { flex-direction: column; }
+      .article-wrapper, .comment-section { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .static-page { padding-left: 1.2rem; padding-right: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ======== NAV ======== -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">☽</div>
+    <span>Media Istiqomah</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" id="nav-home" class="active">Beranda</a>
+    <a onclick="showPage('artikel1')" id="nav-artikel1">Al-Fatihah</a>
+    <a onclick="showPage('artikel2')" id="nav-artikel2">Sabar</a>
+    <a onclick="showPage('about')" id="nav-about">Tentang</a>
+    <a onclick="showPage('contact')" id="nav-contact">Kontak</a>
+  </div>
+  <div class="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="showPage('home');toggleMobile()">🏠 Beranda</a>
+  <a onclick="showPage('artikel1');toggleMobile()">📖 Al-Fatihah</a>
+  <a onclick="showPage('artikel2');toggleMobile()">📖 Keutamaan Sabar</a>
+  <a onclick="showPage('about');toggleMobile()">ℹ️ Tentang</a>
+  <a onclick="showPage('contact');toggleMobile()">📬 Kontak</a>
+</div>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="page-home">
+
+  <div class="home-hero">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <h1>Media Istiqomah</h1>
+    <p>Platform artikel Islami pilihan — menghadirkan ilmu yang bermanfaat, menyentuh hati, dan memperkuat iman dalam kehidupan sehari-hari.</p>
+  </div>
+
+  <div class="articles-grid">
+    <h2>Artikel Terbaru</h2>
+    <div class="cards">
+
+      <!-- Card 1 -->
+      <div class="card" onclick="showPage('artikel1')">
+        <div class="card-color-bar bar-green"></div>
+        <div class="card-badge">
+          <div class="card-badge-dot"></div>
+          <span>Tafsir & Al-Qur'an</span>
+        </div>
+        <div class="card-body">
+          <h3>Makna Mendalam Surat Al-Fatihah: Doa Pembuka Setiap Langkah</h3>
+          <p>Di balik tujuh ayat yang singkat tersimpan kedalaman makna yang para ulama tuangkan dalam ribuan halaman kitab tafsir.</p>
+        </div>
+        <div class="card-footer">
+          <span>📅 27 Feb 2026 · ⏱ 8 mnt</span>
+          <span class="card-read">Baca →</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card" onclick="showPage('artikel2')">
+        <div class="card-color-bar bar-teal"></div>
+        <div class="card-badge">
+          <div class="card-badge-dot"></div>
+          <span>Akhlak & Tazkiyatun Nafs</span>
+        </div>
+        <div class="card-body">
+          <h3>Keutamaan Bersabar: Bekal Terkuat Seorang Mukmin</h3>
+          <p>Sabar bukan berarti diam dan pasrah tanpa daya. Ia adalah kekuatan aktif — pilihan sadar untuk tetap teguh di atas kebenaran.</p>
+        </div>
+        <div class="card-footer">
+          <span>📅 2 Mei 2026 · ⏱ 7 mnt</span>
+          <span class="card-read">Baca →</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== ARTIKEL 1 ==================== -->
+<div class="page" id="page-artikel1">
+
+  <header class="article-header green-bg">
+    <div class="header-bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <span class="header-cat">Tafsir & Al-Qur'an</span>
+    <h1>Makna Mendalam <em>Surat Al-Fatihah</em>:<br>Doa Pembuka Setiap Langkah</h1>
+    <div class="header-meta">
+      <span>📅 27 Februari 2026</span>
+      <span>⏱ 8 menit baca</span>
+      <span>👁 12.4 rb ditonton</span>
+      <span>💬 <span id="count1">3</span> komentar</span>
+    </div>
+    <div class="header-author">
+      <div class="author-avatar" style="color:var(--green);">ع</div>
+      <div class="author-info">
+        <strong>Ustadz Ahmad Fauzi, Lc.</strong>
+        <span>Pengajar Ilmu Tafsir, Pesantren Darussalam</span>
+      </div>
+    </div>
+  </header>
+
+  <article class="article-wrapper">
+    <div class="pull-quote">
+      <p>"Surat Al-Fatihah adalah ummul-kitab — induk dari seluruh Al-Qur'an. Ia merangkum tauhid, ibadah, doa, dan petunjuk hidup dalam tujuh ayat yang agung."</p>
+      <cite>— HR. Bukhari & Muslim</cite>
+    </div>
+
+    <p>Al-Fatihah bukan sekadar bacaan pembuka shalat yang kita lafalkan tanpa sadar. Di balik tujuh ayatnya yang singkat tersimpan kedalaman makna yang para ulama tuangkan dalam ribuan halaman kitab tafsir. Memahami Al-Fatihah berarti memahami inti dari seluruh ajaran Islam.</p>
+
+    <div class="verse-block">
+      <div class="verse-arabic">ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ</div>
+      <p class="verse-latin">Al-ḥamdu lillāhi rabbil-'ālamīn</p>
+      <p class="verse-meaning">"Segala puji bagi Allah, Tuhan seluruh alam."</p>
+      <span class="verse-ref">QS. Al-Fatihah: 2</span>
+    </div>
+
+    <p>Kata <em>Al-Hamd</em> — pujian yang tulus — bukan sekadar ungkapan terima kasih. Ia adalah pengakuan bahwa segala kebaikan, kenikmatan, dan eksistensi semua makhluk bersumber dari Allah semata. Imam Ibnu Qayyim menyebutkan bahwa kalimat ini mengandung tiga fondasi: tauhid rububiyah, tauhid uluhiyah, dan tauhid asma' wa sifat.</p>
+
+    <h2>Ar-Rahman dan Ar-Rahim: Dua Wajah Kasih Sayang Allah</h2>
+    <p>Allah memperkenalkan diri-Nya dengan dua sifat yang berakar pada kata yang sama: <em>rahmah</em> — kasih sayang. <strong>Ar-Rahman</strong> adalah kasih sayang yang luas, meliputi seluruh makhluk tanpa kecuali. Sedangkan <strong>Ar-Rahim</strong> adalah kasih sayang yang khusus, diperuntukkan bagi orang-orang beriman di hari akhirat.</p>
+
+    <div class="highlight-box">
+      <strong>✦ Faedah Ilmu</strong>
+      <p>Urutan penyebutan Ar-Rahman sebelum Ar-Rahim menunjukkan bahwa rahmat Allah bersifat universal lebih dulu, baru kemudian bersifat khusus. Ini mengajarkan kita bahwa Islam adalah agama rahmat bagi semesta alam (rahmatan lil-'alamin).</p>
+    </div>
+
+    <h2>Iyyaka Na'budu: Ikrar Penghambaan Diri</h2>
+    <p>Memasuki ayat kelima, terjadi perpindahan yang luar biasa — dari kalimat orang ketiga ke kalimat langsung berhadapan: <em>"Hanya kepada Engkau kami menyembah."</em> Para ulama menyebut ini sebagai <em>iltifat</em> — perubahan gaya bicara yang menunjukkan semakin dekatnya seorang hamba kepada Allah.</p>
+
+    <div class="verse-block">
+      <div class="verse-arabic">إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ</div>
+      <p class="verse-latin">Iyyāka na'budu wa iyyāka nasta'īn</p>
+      <p class="verse-meaning">"Hanya kepada Engkau kami menyembah dan hanya kepada Engkau kami memohon pertolongan."</p>
+      <span class="verse-ref">QS. Al-Fatihah: 5</span>
+    </div>
+
+    <p>Ayat ini adalah inti dari Al-Fatihah dan inti dari seluruh Islam. <em>Na'budu</em> mencakup semua perbuatan zahir dan batin yang dicintai Allah. Sedangkan <em>Nasta'in</em> mengajarkan kita bahwa meski kita berusaha maksimal, hasilnya mutlak hanya Allah yang menentukan.</p>
+
+    <div class="ornament-divider">✦ ✦ ✦</div>
+
+    <h2>Shirathal Mustaqim: Jalan yang Selalu Kita Mohon</h2>
+    <p>Setiap hari dalam shalat kita berdoa: <em>"Tunjukilah kami jalan yang lurus."</em> Mengapa? Karena petunjuk (hidayah) bukan sesuatu yang datang sekali lalu selesai. Ia harus terus diperbarui, dijaga, dan dimohonkan setiap saat.</p>
+
+    <div class="highlight-box">
+      <strong>📚 Referensi Lanjutan</strong>
+      <p>Tafsir Ibnu Katsir (Jilid 1), Madaarijus Saalikiin karya Ibnu Qayyim Al-Jauziyyah, serta Al-Fatihah Al-Qur'an Al-Adzim karya Imam Al-Qurthubi.</p>
+    </div>
+
+    <p>Semoga setiap kali kita membaca Al-Fatihah dalam shalat, kita tidak lagi melafazkannya dengan lisan semata, tetapi dengan kehadiran hati yang penuh dan pemahaman yang mendalam.</p>
+
+    <div class="ornament-divider">❋ ❋ ❋</div>
+    <p style="font-style:italic; color:var(--muted); font-size:.95rem;">Wallahu a'lam bishawwab — Hanya Allah yang Maha Mengetahui kebenaran yang sejati.</p>
+
+    <!-- SHARE -->
+    <div class="share-section">
+      <p>💬 Bagikan ilmu ini, semoga menjadi amal jariyah</p>
+      <div class="share-buttons">
+        <button class="share-btn share-wa" onclick="shareArticle('wa','Al-Fatihah')">📱 WhatsApp</button>
+        <button class="share-btn share-fb" onclick="shareArticle('fb','Al-Fatihah')">📘 Facebook</button>
+        <button class="share-btn share-tw" onclick="shareArticle('tw','Al-Fatihah')">𝕏 Twitter</button>
+        <button class="share-btn share-copy" onclick="copyLink('Al-Fatihah')">🔗 Salin Tautan</button>
+      </div>
+    </div>
+
+    <div class="article-tags">
+      <span class="tag">Al-Fatihah</span>
+      <span class="tag">Tafsir</span>
+      <span class="tag">Al-Qur'an</span>
+      <span class="tag">Ibadah</span>
+      <span class="tag">Tauhid</span>
+      <span class="tag">Shalat</span>
+    </div>
+  </article>
+
+  <!-- KOMENTAR ARTIKEL 1 -->
+  <div class="comment-section">
+    <h3>💬 Komentar <span class="comment-count" id="badge1">3</span></h3>
+
+    <div class="comment-form">
+      <h4>✍️ Tinggalkan Komentar</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama *</label>
+          <input type="text" id="name1" placeholder="Nama Anda" />
+        </div>
+        <div class="form-group">
+          <label>Email (opsional)</label>
+          <input type="email" id="email1" placeholder="email@contoh.com" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Komentar *</label>
+        <textarea id="comment1" placeholder="Tuliskan komentar atau pertanyaan Anda..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="submitComment(1)">Kirim Komentar →</button>
+    </div>
+
+    <div class="comments-list" id="comments-list-1">
+      <!-- seeded comments -->
+    </div>
+  </div>
+
+  <section class="cta-section">
+    <div class="arabic-small">جَزَاكَ اللَّهُ خَيْرًا</div>
+    <h3>Baca Artikel Lainnya</h3>
+    <p>Perluas wawasan Anda dengan artikel Islami pilihan lainnya dari Media Istiqomah.</p>
+    <div class="cta-buttons">
+      <button class="btn-gold" onclick="showPage('artikel2')">📖 Keutamaan Sabar</button>
+      <button class="btn-green-outline" onclick="showPage('home')">🏠 Semua Artikel</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ==================== ARTIKEL 2 ==================== -->
+<div class="page" id="page-artikel2">
+
+  <header class="article-header teal-bg">
+    <div class="header-bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <span class="header-cat">Akhlak & Tazkiyatun Nafs</span>
+    <h1>Keutamaan <em>Bersabar</em>:<br>Bekal Terkuat Seorang Mukmin</h1>
+    <div class="header-meta">
+      <span>📅 2 Mei 2026</span>
+      <span>⏱ 7 menit baca</span>
+      <span>👁 8.1 rb ditonton</span>
+      <span>💬 <span id="count2">2</span> komentar</span>
+    </div>
+    <div class="header-author">
+      <div class="author-avatar" style="color:var(--teal);">س</div>
+      <div class="author-info">
+        <strong>Ustadzah Siti Rahmah, M.Ag.</strong>
+        <span>Pengajar Akhlak & Tasawuf, Institut Ilmu Al-Qur'an</span>
+      </div>
+    </div>
+  </header>
+
+  <article class="article-wrapper">
+    <div class="pull-quote">
+      <p>"Sungguh menakjubkan keadaan seorang mukmin. Seluruh urusannya adalah kebaikan. Jika mendapat nikmat ia bersyukur, dan itu baik baginya. Jika ditimpa musibah ia bersabar, dan itu pun baik baginya."</p>
+      <cite>— HR. Muslim, no. 2999</cite>
+    </div>
+
+    <p>Sabar bukan berarti diam dan pasrah tanpa daya. Dalam perspektif Islam, sabar adalah kekuatan aktif — sebuah pilihan sadar untuk tetap teguh di atas kebenaran, menahan diri dari keluhan yang sia-sia, dan terus bergerak meskipun ujian menghimpit dari segala arah.</p>
+
+    <div class="verse-block teal">
+      <div class="verse-arabic">يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ ٱسۡتَعِينُواْ بِٱلصَّبۡرِ وَٱلصَّلَوٰةِ</div>
+      <p class="verse-latin">Yā ayyuhallażīna āmanusta'īnū biṣ-ṣabri waṣ-ṣalāh</p>
+      <p class="verse-meaning">"Wahai orang-orang yang beriman! Mohonlah pertolongan dengan sabar dan shalat."</p>
+      <span class="verse-ref">QS. Al-Baqarah: 153</span>
+    </div>
+
+    <p>Allah menyandingkan sabar dengan shalat dalam satu perintah — bukan tanpa alasan. Keduanya adalah dua sayap yang membawa seorang mukmin melewati badai kehidupan. Shalat menjaga hubungan vertikal dengan Allah, sementara sabar menjaga keutuhan jiwa dalam menghadapi realita dunia.</p>
+
+    <h2>Tiga Tingkatan Sabar dalam Islam</h2>
+    <p>Para ulama membagi sabar ke dalam tiga tingkatan yang saling berkaitan dan saling menguatkan:</p>
+
+    <div class="highlight-box">
+      <strong>1. Sabar dalam Menaati Allah (Sabar 'alā Thā'atillāh)</strong>
+      <p>Melaksanakan ibadah dan perintah Allah memerlukan pengorbanan waktu, tenaga, dan harta. Di sinilah sabar dibutuhkan — untuk terus istiqomah meskipun rasa malas atau tekanan sosial kerap menghalangi.</p>
+    </div>
+
+    <div class="highlight-box">
+      <strong>2. Sabar dari Kemaksiatan (Sabar 'an Ma'āṣillāh)</strong>
+      <p>Menahan diri dari hal-hal yang diharamkan Allah adalah perjuangan jiwa yang nyata. Nafsu selalu mengajak ke arah yang mudah dan menyenangkan. Sabar inilah yang membentengi seorang Muslim dari kerusakan akhlak.</p>
+    </div>
+
+    <div class="highlight-box">
+      <strong>3. Sabar atas Takdir Allah (Sabar 'alā Aqdārillāh)</strong>
+      <p>Ketika musibah datang — sakit, kehilangan, kegagalan — seorang mukmin tidak bereaksi dengan kemarahan kepada Allah. Ia meyakini bahwa di balik setiap ketentuan-Nya tersimpan hikmah yang belum terjangkau akalnya.</p>
+    </div>
+
+    <h2>Allah Bersama Orang-Orang yang Sabar</h2>
+
+    <div class="verse-block teal">
+      <div class="verse-arabic">إِنَّ ٱللَّهَ مَعَ ٱلصَّٰبِرِينَ</div>
+      <p class="verse-latin">Innallāha ma'aṣ-ṣābirīn</p>
+      <p class="verse-meaning">"Sesungguhnya Allah beserta orang-orang yang sabar."</p>
+      <span class="verse-ref">QS. Al-Baqarah: 153</span>
+    </div>
+
+    <p>Kalimat ini bukan sekadar janji kosong — ia adalah deklarasi kehadiran Allah bagi mereka yang bersabar. Makna "bersama" di sini mencakup pertolongan, penjagaan, bimbingan, dan rahmat-Nya yang menyeluruh. Orang yang sabar tidak pernah sendirian.</p>
+
+    <p>Imam Ibnul Qayyim dalam <em>Uddatush Shabirin</em> menuliskan bahwa sabar adalah separuh keimanan, karena iman terdiri dari dua bagian: syukur dan sabar.</p>
+
+    <div class="ornament-divider">❋ ❋ ❋</div>
+
+    <p>Dunia ini dirancang Allah sebagai tempat ujian, bukan tempat bersenang-senang tanpa batas. Setiap ujian adalah undangan untuk naik derajat — dan sabar adalah tangga yang Allah sediakan.</p>
+    <p style="font-style:italic; color:var(--muted); font-size:.95rem;">Wallahu a'lam bishawwab — Hanya Allah yang Maha Mengetahui kebenaran yang sejati.</p>
+
+    <!-- SHARE -->
+    <div class="share-section">
+      <p>💬 Bagikan ilmu ini, semoga menjadi amal jariyah</p>
+      <div class="share-buttons">
+        <button class="share-btn share-wa" onclick="shareArticle('wa','Keutamaan Sabar')">📱 WhatsApp</button>
+        <button class="share-btn share-fb" onclick="shareArticle('fb','Keutamaan Sabar')">📘 Facebook</button>
+        <button class="share-btn share-tw" onclick="shareArticle('tw','Keutamaan Sabar')">𝕏 Twitter</button>
+        <button class="share-btn share-copy" onclick="copyLink('Keutamaan Sabar')">🔗 Salin Tautan</button>
+      </div>
+    </div>
+
+    <div class="article-tags">
+      <span class="tag">Sabar</span>
+      <span class="tag">Akhlak</span>
+      <span class="tag">Tazkiyatun Nafs</span>
+      <span class="tag">Al-Baqarah</span>
+      <span class="tag">Iman</span>
+      <span class="tag">Ujian Hidup</span>
+    </div>
+  </article>
+
+  <!-- KOMENTAR ARTIKEL 2 -->
+  <div class="comment-section">
+    <h3>💬 Komentar <span class="comment-count" id="badge2">2</span></h3>
+
+    <div class="comment-form">
+      <h4>✍️ Tinggalkan Komentar</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama *</label>
+          <input type="text" id="name2" placeholder="Nama Anda" />
+        </div>
+        <div class="form-group">
+          <label>Email (opsional)</label>
+          <input type="email" id="email2" placeholder="email@contoh.com" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Komentar *</label>
+        <textarea id="comment2" placeholder="Tuliskan komentar atau pertanyaan Anda..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="submitComment(2)">Kirim Komentar →</button>
+    </div>
+
+    <div class="comments-list" id="comments-list-2"></div>
+  </div>
+
+  <section class="cta-section">
+    <div class="arabic-small">جَزَاكَ اللَّهُ خَيْرًا</div>
+    <h3>Baca Artikel Lainnya</h3>
+    <p>Perluas wawasan Anda dengan artikel Islami pilihan lainnya dari Media Istiqomah.</p>
+    <div class="cta-buttons">
+      <button class="btn-gold" onclick="showPage('artikel1')">📖 Surat Al-Fatihah</button>
+      <button class="btn-green-outline" onclick="showPage('home')">🏠 Semua Artikel</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ==================== ABOUT PAGE ==================== -->
+<div class="page" id="page-about">
+  <div class="static-page">
+    <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem;">
+      <div class="logo-icon" style="border-color:var(--gold);color:var(--gold);">☽</div>
+      <h1>Tentang Kami</h1>
+    </div>
+    <p class="sub">Mengenal Media Istiqomah lebih dalam</p>
+
+    <p>Media Istiqomah adalah platform artikel Islami berbahasa Indonesia yang hadir untuk memberikan konten keislaman yang berkualitas, terpercaya, dan mudah dipahami oleh seluruh kalangan Muslim Indonesia.</p>
+
+    <p>Kami percaya bahwa ilmu agama yang disebarkan dengan baik adalah investasi akhirat yang tak ternilai harganya. Setiap artikel yang kami hadirkan melalui proses penelitian mendalam dan tinjauan dari para ulama yang kompeten.</p>
+
+    <div class="highlight-box">
+      <strong>🎯 Visi Kami</strong>
+      <p>Menjadi platform referensi Islami terpercaya yang membantu umat Muslim Indonesia hidup dengan ilmu, iman, dan istiqomah dalam menjalani kehidupan sehari-hari.</p>
+    </div>
+
+    <h2>Tim Penulis</h2>
+    <p>Konten kami dibuat oleh para pengajar dan ulama berpengalaman dari berbagai pesantren dan institusi pendidikan Islam di Indonesia.</p>
+
+    <div class="about-team">
+      <div class="team-card">
+        <div class="team-avatar" style="background:linear-gradient(135deg,var(--green),var(--gold));">ع</div>
+        <h4>Ustadz Ahmad Fauzi, Lc.</h4>
+        <p>Pengajar Ilmu Tafsir, Pesantren Darussalam</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:linear-gradient(135deg,var(--teal),var(--gold));">س</div>
+        <h4>Ustadzah Siti Rahmah, M.Ag.</h4>
+        <p>Pengajar Akhlak & Tasawuf, Institut Ilmu Al-Qur'an</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:linear-gradient(135deg,var(--brown),var(--gold));">م</div>
+        <h4>Ustadz Muhammad Irfan, S.Ag.</h4>
+        <p>Peneliti Hadis & Fiqih, Universitas Islam Negeri</p>
+      </div>
+    </div>
+
+    <h2>Mengapa Memilih Media Istiqomah?</h2>
+    <div class="highlight-box">
+      <strong>✦ Konten Terpercaya & Terverifikasi</strong>
+      <p>Setiap artikel ditinjau oleh minimal dua ulama berkompeten sebelum dipublikasikan.</p>
+    </div>
+    <div class="highlight-box">
+      <strong>✦ Bahasa yang Mudah Dipahami</strong>
+      <p>Ilmu agama disampaikan dengan bahasa yang jernih, tanpa mengurangi kedalaman maknanya.</p>
+    </div>
+    <div class="highlight-box">
+      <strong>✦ Bebas Iklan, Fokus Ilmu</strong>
+      <p>Platform ini hadir murni untuk menyebarkan manfaat, bukan keuntungan komersial semata.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONTACT PAGE ==================== -->
+<div class="page" id="page-contact">
+  <div class="static-page">
+    <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem;">
+      <div class="logo-icon" style="border-color:var(--gold);color:var(--gold);">☽</div>
+      <h1>Hubungi Kami</h1>
+    </div>
+    <p class="sub">Kami senang mendengar dari Anda — pertanyaan, saran, atau kolaborasi</p>
+
+    <div class="contact-info">
+      <div class="contact-info-item">
+        <span>📧 Email</span>
+        <p>redaksi@mediaistiqomah.id</p>
+      </div>
+      <div class="contact-info-item">
+        <span>📱 WhatsApp</span>
+        <p>+62 895 1344 8951 </p>
+      </div>
+      <div class="contact-info-item">
+        <span>🏛️ Kantor</span>
+        <p>Jakarta, Indonesia</p>
+      </div>
+      <div class="contact-info-item">
+        <span>⏰ Jam Kerja</span>
+        <p>Senin–Jumat, 08.00–17.00 WIB</p>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h2 style="margin-top:0;">Kirim Pesan</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Lengkap *</label>
+          <input type="text" id="cname" placeholder="Nama Anda" />
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="cemail" placeholder="email@contoh.com" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Subjek</label>
+        <input type="text" id="csubject" placeholder="Perihal pesan Anda" />
+      </div>
+      <div class="form-group" style="margin-bottom:1.2rem;">
+        <label>Pesan *</label>
+        <textarea id="cmessage" style="min-height:130px;" placeholder="Tuliskan pesan, pertanyaan, atau saran Anda..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="sendContact()">Kirim Pesan →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== FOOTER ======== -->
+<footer>
+  <div class="logo" onclick="showPage('home')" style="justify-content:center;margin-bottom:.8rem;cursor:pointer;">
+    <div class="logo-icon" style="border-color:var(--gold-light);color:var(--gold-light);">☽</div>
+    <span style="color:var(--gold-light);font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;">Media Istiqomah</span>
+  </div>
+  <div class="footer-links">
+    <a onclick="showPage('home')">Beranda</a>
+    <a onclick="showPage('artikel1')">Al-Fatihah</a>
+    <a onclick="showPage('artikel2')">Keutamaan Sabar</a>
+    <a onclick="showPage('about')">Tentang</a>
+    <a onclick="showPage('contact')">Kontak</a>
+  </div>
+  <p>© 2026 Media Istiqomah · Platform Artikel Islami Indonesia</p>
+  <p style="margin-top:.4rem;font-family:'Amiri',serif;font-size:1rem;color:rgba(255,255,255,.4);">اللَّهُمَّ انْفَعْنَا بِمَا عَلَّمْتَنَا</p>
+</footer>
+
+<script>
+  /* ======== DATA KOMENTAR ======== */
+  const commentsData = {
+    1: [
+      { name: 'Budi Santoso', time: '27 Feb 2026, 09:14', text: 'Jazakallah khairan, artikel ini sangat membuka mata saya tentang makna Al-Fatihah yang selama ini sering saya baca tanpa memahaminya. Semoga bisa lebih khusyu dalam shalat.', color: '#2d5016', likes: 12, liked: false },
+      { name: 'Rina Maharani', time: '27 Feb 2026, 14:30', text: 'MasyaAllah tabarakallah. Penjelasan tentang iltifat pada ayat iyyaka na\'budu benar-benar baru bagi saya. Terima kasih sudah berbagi ilmu yang bermanfaat ini.', color: '#1a4a5a', likes: 8, liked: false },
+      { name: 'Hasan Al-Fatih', time: '28 Feb 2026, 08:55', text: 'Artikel yang sangat baik. Saya share ke grup keluarga, semoga bermanfaat bagi semua. Barakallahu fiikum kepada penulis.', color: '#4a2c0a', likes: 5, liked: false },
+    ],
+    2: [
+      { name: 'Dewi Rahmawati', time: '2 Mei 2026, 10:22', text: 'Alhamdulillah, artikel tentang sabar ini datang tepat waktu ketika saya sedang menghadapi ujian hidup. Penjelasan tiga tingkatan sabar sangat membantu saya memahami sabar secara lebih komprehensif.', color: '#1a4a5a', likes: 15, liked: false },
+      { name: 'Farhan Mubarak', time: '2 Mei 2026, 16:40', text: 'Subhanallah. Penjelasan bahwa sabar adalah kekuatan aktif bukan kepasrahan sangat menginspirasi. Terima kasih Ustadzah Siti Rahmah atas pencerahan ini.', color: '#2d5016', likes: 9, liked: false },
+    ]
+  };
+
+  /* ======== RENDER KOMENTAR ======== */
+  function renderComments(articleId) {
+    const list = document.getElementById('comments-list-' + articleId);
+    const data = commentsData[articleId];
+    if (!data || data.length === 0) {
+      list.innerHTML = '<div class="no-comments">Belum ada komentar. Jadilah yang pertama berkomentar! ✨</div>';
+      return;
+    }
+    list.innerHTML = data.map((c, i) => `
+      <div class="comment-item">
+        <div class="comment-header">
+          <div class="comment-avatar" style="background:${c.color};">${c.name.charAt(0)}</div>
+          <div class="comment-meta">
+            <strong>${c.name}</strong>
+            <span>${c.time}</span>
+          </div>
+        </div>
+        <p class="comment-text">${c.text}</p>
+        <button class="comment-like ${c.liked ? 'liked' : ''}" onclick="toggleLike(${articleId}, ${i})">
+          ${c.liked ? '♥' : '♡'} <span id="like-${articleId}-${i}">${c.likes}</span> Suka
+        </button>
+      </div>
+    `).join('');
+  }
+
+  function updateBadges() {
+    [1,2].forEach(id => {
+      const n = commentsData[id].length;
+      const badge = document.getElementById('badge' + id);
+      const count = document.getElementById('count' + id);
+      if (badge) badge.textContent = n;
+      if (count) count.textContent = n;
+    });
+  }
+
+  function toggleLike(articleId, idx) {
+    const c = commentsData[articleId][idx];
+    c.liked = !c.liked;
+    c.likes += c.liked ? 1 : -1;
+    document.getElementById('like-' + articleId + '-' + idx).textContent = c.likes;
+    const btn = document.querySelectorAll('#comments-list-' + articleId + ' .comment-like')[idx];
+    btn.classList.toggle('liked', c.liked);
+    btn.childNodes[0].textContent = c.liked ? '♥' : '♡';
+  }
+
+  function submitComment(articleId) {
+    const name = document.getElementById('name' + articleId).value.trim();
+    const comment = document.getElementById('comment' + articleId).value.trim();
+    if (!name) { showToast('⚠️ Mohon isi nama Anda'); return; }
+    if (!comment) { showToast('⚠️ Mohon isi komentar Anda'); return; }
+    const now = new Date();
+    const time = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const colors = ['#2d5016', '#1a4a5a', '#4a2c0a', '#7a6248', '#3d6b1e'];
+    commentsData[articleId].push({
+      name, time, text: comment,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      likes: 0, liked: false                                  
+    });
+    document.getElementById('name' + articleId).value = '';
+    document.getElementById('email' + articleId).value = '';
+    document.getElementById('comment' + articleId).value = '';
+    renderComments(articleId);
+    updateBadges();
+    showToast('✅ Jazakallah khairan! Komentar Anda telah dikirim.');
+  }
+
+  /* ======== SHARE ======== */
+  function shareArticle(platform, title) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('Baca artikel menarik: "' + title + '" di Media Istiqomah — ' + window.location.href);
+    const links = {
+      wa: 'https://wa.me/?text=' + text,
+      fb: 'https://www.facebook.com/sharer/sharer.php?u=' + url,
+      tw: 'https://twitter.com/intent/tweet?text=' + text
+    };
+    window.open(links[platform], '_blank');
+  }
+
+  function copyLink(title) {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      showToast('🔗 Tautan artikel "' + title + '" berhasil disalin!');
+    }).catch(() => {
+      showToast('🔗 Tautan: ' + window.location.href);
+    });
+  }
+
+  /* ======== CONTACT SEND ======== */
+  function sendContact() {
+    const name = document.getElementById('cname').value.trim();
+    const email = document.getElementById('cemail').value.trim();
+    const message = document.getElementById('cmessage').value.trim();
+    if (!name || !email || !message) { showToast('⚠️ Mohon isi semua field wajib'); return; }
+    document.getElementById('cname').value = '';
+    document.getElementById('cemail').value = '';
+    document.getElementById('csubject').value = '';
+    document.getElementById('cmessage').value = '';
+    showToast('✅ Pesan Anda telah dikirim! Kami akan merespons segera.');
+  }
+
+  /* ======== TOAST ======== */
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  /* ======== PAGE ROUTING ======== */
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    const nav = document.getElementById('nav-' + page);
+    if (nav) nav.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ======== MOBILE MENU ======== */
+  function toggleMobile() {
+    document.getElementById('mobile-menu').classList.toggle('open');
+  }
+
+  /* ======== PROGRESS BAR ======== */
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    if (total > 0) document.getElementById('progress-bar').style.width = (window.scrollY / total * 100) + '%';
+  });
+
+  /* ======== INIT ======== */
+  renderComments(1);
+  renderComments(2);
+  updateBadges();
+</script>
+</body>
+</html>
